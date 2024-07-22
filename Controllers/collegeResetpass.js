@@ -4,10 +4,10 @@ const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
 
 const otpAuthentication = async (req, res) => {
-    const { email } = req.body;
+    const { Emails } = req.body;
 
     try {
-        const mail = await Organization.findOne({ email: email });
+        const mail = await Organization.findOne({ email: Emails });
 
         if (!mail) {
             return res.status(400).json({ message: "Faculty email not found" });
@@ -27,7 +27,7 @@ const otpAuthentication = async (req, res) => {
 
         const mailOptions = {
             from: "maheshvengala4321@gmail.com",
-            to: email,
+            to: Emails,
             subject: "Password Reset for Faculty Seeker",
             text: `OTP for password reset: ${otp}`
         };
@@ -46,17 +46,16 @@ const otpAuthentication = async (req, res) => {
 
 
 const resetPassword =async(req,res)=> {
-    const {email,otp,password} =req.body;
+    const {Emails,OTP,newPassword} =req.body;
 
 
     try {
-        const facultypass = await Organization.findOne({email:email});
+        const facultypass = await Organization.findOne({email:Emails});
 
-        if(!facultypass || facultypass.resetPassword!==otp){
+        if(!facultypass || facultypass.resetPassword!==OTP){
             return res.status(400).json({message:"faculty not found or invalid otp"});
         }
-
-        const hashpass = await bcrypt.hash(password,10);
+        const hashpass = await bcrypt.hash(newPassword,10);
 
         facultypass.password= hashpass;
         facultypass.save();

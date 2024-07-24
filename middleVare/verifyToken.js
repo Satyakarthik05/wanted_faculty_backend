@@ -13,7 +13,7 @@ const verifyToken = async (req, res, next)=>{
     }
     try {
         const decoded = jwt.verify(token, secret)
-        const college = await faculty.findById(decoded.collegeId);
+        const college = await College.findById(decoded.collegeId);
         if(!college){
             return res.status(404).json({error:"college not found"});
         }

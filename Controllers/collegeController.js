@@ -58,7 +58,6 @@ const collegePosts = async (req,res)=> {
     const {Organization,Branch,Experience,Designation,Nofopenings,Salary}= req.body;
 
     try {
-        // const collegeId = req.params.collegeId;
         const college = await College.findById(req.collegeId);
 
         if(!college){
@@ -86,15 +85,13 @@ const collegePosts = async (req,res)=> {
 
 const getCollegePosts = async (req,res)=>{
     try {
-        const collegeId = req.params.collegeId;
 
-        const collegePosts = await College.findById(collegeId);
+        const Posts = await collegePost.find({College:req.collegeId});
 
-        if(!collegePosts){
-            res.status(400).json({message:"No College found"});
+        if(!Posts){
+            res.status(400).json({message:"No Posts found"});
         }
 
-        const Posts = await collegePost.find({College:collegeId});
         res.status(200).json({Posts})
     } catch (error) {
         console.log(error);
@@ -102,6 +99,7 @@ const getCollegePosts = async (req,res)=>{
 
 
 }
+
 
 const Applications = async (req, res) => {
     const { applicantId } = req.params;

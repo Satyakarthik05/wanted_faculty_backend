@@ -9,7 +9,7 @@ const app =express.Router()
 app.post('/collegeSignup',collegeController.collegeRegister);
 app.post('/collegeLogin',collegeController.collegeLogin);
 app.post('/collegeposts',verifyToken,collegeController.collegePosts);
-app.get('/myposts/:collegeId',collegeController.getCollegePosts);
+app.get('/myposts',verifyToken,collegeController.getCollegePosts);
 app.get('/applicants/:applicantId',collegeController.Applications);
 app.post('/collegepassreset',collegeResetpass.resetPassword);
 app.post('/collegeotp',collegeResetpass.otpAuthentication);

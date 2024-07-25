@@ -13,5 +13,7 @@ app.get('/myposts',verifyToken,collegeController.getCollegePosts);
 app.get('/applicants/:applicantId',collegeController.Applications);
 app.post('/collegepassreset',collegeResetpass.resetPassword);
 app.post('/collegeotp',collegeResetpass.otpAuthentication);
+app.delete('/deletepost/:id',collegeController.deletePost);
+app.get('/mydetails',verifyToken,collegeController.getCollege)
 module.exports=app;
 

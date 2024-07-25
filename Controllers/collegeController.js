@@ -52,6 +52,17 @@ const collegeLogin = async (req,res)=> {
     }
 }
 
+const getCollege = async (req,res)=> {
+    try {
+        const getCollege = await College.findById(req.collegeId);
+        if(!getCollege){
+            return res.status(400).json({message:"College not found"})
+        }
+        res.status(200).json(getCollege);
+     } catch (error) {
+        console.log(error);
+    }
+}
 
 
 const collegePosts = async (req,res)=> {
@@ -86,7 +97,58 @@ const collegePosts = async (req,res)=> {
 const getCollegePosts = async (req,res)=>{
     try {
 
-        const Posts = await collegePost.find({College:req.collegeId});
+        const Posts = await collegePost.find({College:req.collegeId}).populate('Applicants');
+
+        if(!Posts){
+            res.status(400).json({message:"No Posts found"});
+        }
+
+        res.status(200).json({Posts})
+    } catch (error) {
+        console.log(error);
+    }
+
+
+}
+
+const deletePost = async(req,res)=> {
+    const {id} = req.params;
+    try {
+        const getPost = await collegePost.findByIdAndDelete(id);
+
+        if(!getPost){
+            return res.status(400).json({message:"Post not found"})
+        }
+
+        res.status(200).json({message:"Post deleted successfully"})
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+// const Applications = async (req, res) => {
+//     const { applicantId } = req.params;
+
+//     try {
+//         const job = await collegePost.findById(applicantId);
+
+//         if (job) {
+//             res.status(200).json(job);
+//         } else {
+//             res.status(400).json({ message: "No applied organizations" });
+//         }
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({ message: "Server error" });
+//     }
+// };
+const Applications = async (req,res)=>{
+
+    const { applicantId } = req.params;
+    try {
+
+        const Posts = await collegePost.findById(applicantId).populate('Applicants');
 
         if(!Posts){
             res.status(400).json({message:"No Posts found"});
@@ -101,21 +163,4 @@ const getCollegePosts = async (req,res)=>{
 }
 
 
-const Applications = async (req, res) => {
-    const { applicantId } = req.params;
-
-    try {
-        const job = await faculty.findOne({ appliedOrganization: applicantId });
-
-        if (job) {
-            res.status(200).json(job);
-        } else {
-            res.status(400).json({ message: "No applied organizations" });
-        }
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Server error" });
-    }
-};
-
-module.exports ={collegeRegister,collegeLogin,collegePosts,getCollegePosts,Applications}
+module.exports ={collegeRegister,collegeLogin,collegePosts,getCollegePosts,Applications,deletePost,getCollege}

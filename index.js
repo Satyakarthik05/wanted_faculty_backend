@@ -29,6 +29,7 @@ app.use('/college',collegeRouter);
 app.use('/college',collegeRouter);
 app.use('/faculty',facultyRouter);
 app.use('/apply',applicationRouter);
+app.use('/uploads', express.static('uploads'));
 
 
 
@@ -39,6 +40,6 @@ app.use('/apply',applicationRouter);
 
 
 
-app.listen(3000,()=> {
+app.listen(3000,'0.0.0.0',()=> {
     console.log("server is running successfully")
 })

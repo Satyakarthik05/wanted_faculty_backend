@@ -4,23 +4,25 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const collegePosts = require('../models/collegePosts');
+const path = require('path');
 
 
 secret="Satya12@";
 
-const storage =multer.diskStorage({
-    destination:function(req,res,cb){
-        cb(null,'uploads/');
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads/');
     },
-    filename:function(req,file,cb){
-        cb(null.Date.now()+'-'+Path.extname(file.originalname));
+    filename: function (req, file, cb) {
+      cb(null, Date.now() + path.extname(file.originalname));
     }
-})
-const upload =multer({storage:storage});
+  });
+  
+  const upload = multer({ storage: storage });
 
 
 const facultySign = async (req,res)=> {
-    const{Name,email,password,UG,PG,PHD,Experience}= req.body;
+    const{Name,email,password,phone,UG,PG,PHD,Experience}= req.body;
 
     
 
@@ -33,7 +35,7 @@ const facultySign = async (req,res)=> {
         const hashPassword = await bcrypt.hash(password,10);
 
         const newFaculty = new faculty({
-            Name,email,password:hashPassword,UG,PG,PHD,Experience
+            Name,email,password:hashPassword,phone,UG,PG,PHD,Experience
         })
 
         await newFaculty.save();
@@ -54,9 +56,23 @@ const facultyLogin = async (req,res)=> {
             return res.status(400).json({message:"Invalid Username or Password"})
         }
 
-        const token = await jwt.sign({facultyId:facultys._id},secret,{expiresIn:"1h"});
+        const token = await jwt.sign({facultyId:facultys._id},secret, { expiresIn: '1h' });
 
         res.status(200).json({message:"Login Successful",token})
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const getDetails = async (req,res)=> {
+    try {
+        const facultyDetails = await faculty.findById(req.facultyId)
+        if(!facultyDetails){
+            return res.status(200).json({message:"Faculty not found"});
+        }
+        else{
+            res.status(200).json(facultyDetails);
+        }
     } catch (error) {
         console.log(error);
     }
@@ -65,15 +81,20 @@ const facultyLogin = async (req,res)=> {
 
 
 const facultyModify = async (req, res) => {
-    const  {facultyId}  = req.params;
     const { UG, PG, PHD, Experience } = req.body;
+    const facultyId = req.facultyId;
   
     try {
-
-      const Resume = req.file?req.file.filename:undefined;
+      const Resume = req.file ? req.file.filename : undefined;
+  
+      const parsedUG = UG ? JSON.parse(UG) : undefined;
+      const parsedPG = PG ? JSON.parse(PG) : undefined;
+      const parsedPHD = PHD ? JSON.parse(PHD) : undefined;
+  
       const facultyUpdate = await faculty.findByIdAndUpdate(
-        {_id:facultyId},
-        { UG, PG, PHD, Experience, Resume },
+        facultyId,
+        { UG: parsedUG, PG: parsedPG, PHD: parsedPHD, Experience, Resume },
+        { new: true }
       );
   
       if (!facultyUpdate) {
@@ -85,7 +106,7 @@ const facultyModify = async (req, res) => {
       console.error(error);
       res.status(500).json({ message: "Server Error" });
     }
-};
+  };
 
 
 const filterPosts = async (req, res) => {
@@ -93,7 +114,7 @@ const filterPosts = async (req, res) => {
 
     try {
         if (post) {
-            const find = await collegePosts.findOne({ Branch: post });
+            const find = await collegePosts.find({ Branch: post }).populate('College');
             if (find) {
                 return res.json(find);
             } else {
@@ -101,7 +122,7 @@ const filterPosts = async (req, res) => {
             }
         }
 
-        const allPosts = await collegePosts.find();
+        const allPosts = await collegePosts.find().populate('College');
         res.json(allPosts);
     } catch (error) {
         console.error(error);
@@ -110,10 +131,11 @@ const filterPosts = async (req, res) => {
 
 
 const myApplications =async(req,res)=> {
-    const {organizationId} = req.params;
+    // const {organizationId} = req.params;
+    const facultyId = req.facultyId;
     
     try {
-        const application = await collegePosts.findOne({Applicants:organizationId});
+        const application = await collegePosts.find({Applicants:facultyId});
 
         if(application){
             res.status(200).json(application)
@@ -132,4 +154,4 @@ const myApplications =async(req,res)=> {
   
   
 
-module.exports= {facultySign,facultyModify,facultyLogin,filterPosts,myApplications}
+module.exports= {facultySign,facultyModify,facultyLogin,filterPosts,myApplications,getDetails,upload}

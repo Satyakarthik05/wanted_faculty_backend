@@ -16,6 +16,18 @@ const CollegeSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    phone:{
+        type:String,
+        required:true
+    },
+    address:{
+        type:String,
+        required:true
+    },
+    link:{
+        type:String,
+        required:true
+    },
     collegePosts:[
         {
         type:mongoose.Schema.Types.ObjectId,

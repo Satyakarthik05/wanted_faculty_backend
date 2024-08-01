@@ -1,17 +1,17 @@
 const express = require('express');
-const facultyController = require('../Controllers/facultyController');
-const resetPassword = require('../Controllers/forgetpasswordController');
+const { facultySign, facultyModify, facultyLogin, filterPosts, myApplications, getDetails, upload } = require('../Controllers/facultyController');
+const resetPassword = require('../controllers/forgetpasswordController');
+const FacultyToken = require('../middleVare/verifyFacultyToken');
 
-const app = express.Router();
+const router = express.Router();
 
+router.post('/facultySign', facultySign);
+router.put('/facultymodify', upload.single('Resume'), FacultyToken, facultyModify);
+router.post('/facultyLogin', facultyLogin);
+router.get('/postFilter/:post?', filterPosts);
+router.get('/mydetails', FacultyToken, getDetails);
+router.get('/myapplications',FacultyToken,myApplications);
+router.post('/resetpass', resetPassword.otpAuthentication);
+router.post('/verifyotp', resetPassword.resetPassword);
 
-app.post('/facultySign',facultyController.facultySign);
-app.put('/facultymodify/:facultyId',facultyController.facultyModify);
-app.post('/facultyLogin',facultyController.facultyLogin);
-app.get('/postFilter/:post?',facultyController.filterPosts);
-app.get('/myapplications/:organizationId',facultyController.myApplications);
-app.post('/resetpass',resetPassword.otpAuthentication);
-app.post('/verifyotp',resetPassword.resetPassword);
-
-
-module.exports=app;
+module.exports = router;

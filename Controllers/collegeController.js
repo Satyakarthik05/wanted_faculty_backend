@@ -10,7 +10,7 @@ secret="Satya12@"
 
 
 const collegeRegister = async(req,res)=>{
-    const {Organization,email,password}= req.body;
+    const {Organization,email,password,phone,address,link}= req.body;
 
     try {
         const emails = await College.findOne({email:email});
@@ -21,7 +21,7 @@ const collegeRegister = async(req,res)=>{
         const hashedPassword= await bcrypt.hash(password,10);
 
         const newCollege = new College({
-            Organization,email,password:hashedPassword
+            Organization,email,password:hashedPassword,phone,address,link
         });
         await newCollege.save();
         res.status(200).json({message:"Organization registration successful"});
@@ -44,7 +44,7 @@ const collegeLogin = async (req,res)=> {
             return res.status(400).json({message:"Invalid email or password"});
         }
 
-        const token = jwt.sign({collegeId:college._id},secret,{expiresIn:"1h"});
+        const token = jwt.sign({collegeId:college._id},secret, { expiresIn: '1h' });
 
         res.status(200).json({message:"Login successful",token})
     } catch (error) {
@@ -85,10 +85,7 @@ const collegePosts = async (req,res)=> {
         await college.save();
 
         res.status(200).json(collegePosts);
-    
-
-
-
+        
     } catch (error) {
         console.log(error)
     }
@@ -126,23 +123,6 @@ const deletePost = async(req,res)=> {
     }
 }
 
-
-// const Applications = async (req, res) => {
-//     const { applicantId } = req.params;
-
-//     try {
-//         const job = await collegePost.findById(applicantId);
-
-//         if (job) {
-//             res.status(200).json(job);
-//         } else {
-//             res.status(400).json({ message: "No applied organizations" });
-//         }
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({ message: "Server error" });
-//     }
-// };
 const Applications = async (req,res)=>{
 
     const { applicantId } = req.params;

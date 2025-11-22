@@ -1,6 +1,6 @@
 const express = require('express');
 const { facultySign, facultyModify, facultyLogin, filterPosts, myApplications, getDetails, upload } = require('../Controllers/facultyController');
-const resetPassword = require('../controllers/forgetpasswordController');
+const resetPassword = require('../Controllers/forgetpasswordController');
 const FacultyToken = require('../middleVare/verifyFacultyToken');
 
 const router = express.Router();

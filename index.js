@@ -11,12 +11,12 @@ const app =express();
 app.use(express.json());
 app.use(bodyParser.json());
 
-const corsOptions= {
-    origin:['http//:localhost:5173'],
-    methods:['POST','GET','DELETE','PUT'],
-    // allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials:true
-}
+const corsOptions = {
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    credentials: false
+};
+
 
 app.use(cors());
 

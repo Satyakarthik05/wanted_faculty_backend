@@ -17,7 +17,6 @@ const facultySchema = new mongoose.Schema({
     },
     phone:{
         type:String,
-        required:true
     },
     UG:[
         {
